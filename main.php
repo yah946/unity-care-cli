@@ -1,5 +1,106 @@
 <?php
-
+require_once "./src/connection/config.php";
+function update(){
+    // Global variables:
+    global $conn;
+    global $choice;
+    $find = false;
+    // Chose the id of patient:
+    $id = readline('Enter the Patient\'s Id You Want to Delete: ');
+    // Vrfy the id (exist or not):
+    $stm = $conn->prepare("select id from patient");
+    $stm->execute();
+    $result = $stm->fetchAll(PDO::FETCH_ASSOC);
+    for($i=0;$i<count($result);$i++){
+        if($id==$result[$i]['id']){
+            echo("id=$id: Find!\n");
+            $find=true;
+        }
+    }
+    // Not Found
+    if(!$find){
+        echo "not found!\n";
+    }else if($find){
+        $f = readline('Enter the Patient\'s First Name: ');
+        $l = readline('Enter the Patient\'s Last Name: ');
+        $g = readline('Enter the Patient\'s Gender: ');
+        $d = readline('Enter the Patient\'s Date Of Birth: ');
+        $t = readline('Enter the Patient\'s Phone Number: ');
+        $e = readline('Enter the Patient\'s Email: ');
+        $a = readline('Enter the Patient\'s Address: ');
+        $stm=$conn->prepare('update patient set firstName=?,lastName=?,gender=?,dateOfBirth=?,phoneNum=?,email=?,address=? where id=?');
+        $stm->execute([$f,$l,$g,$d,$t,$e,$a,$id]);
+        echo "+++++++++++++++++++++++++\n";
+        echo "Data has Been changed\n";
+    }
+    $choice=6;
+}
+function delete(){
+    // Global variables:
+    global $conn;
+    global $choice;
+    $answere = '';
+    // Chose the id of patient:
+    $id = readline('Enter the Patient\'s Id You Want to Delete: ');
+    // Vrfy the id (exist or not):
+    $stm = $conn->prepare("select id from patient");
+    $stm->execute();
+    $result = $stm->fetchAll(PDO::FETCH_ASSOC);
+    for($i=0;$i<count($result);$i++){
+        if($id==$result[$i]['id']){
+            $answere = readline("Do you confirm this operation? (Y/N)");
+        }
+    }
+    // Not Found
+    if(!$answere){
+        echo "not found!\n";
+    }
+    // Remove The Patient Or Cancel the operation
+    else if($answere==='y' || $answere==='Y'){
+        $stm = $conn->prepare("delete from patient where id=:id");
+        $stm->bindParam(':id',$id,PDO::PARAM_INT);
+        $stm->execute();
+        echo "The Patient has been Deleted\n";
+    }
+    $choice=6;
+}
+function insert(){
+    $f = readline('Enter the Patient\'s First Name: ');
+    $l = readline('Enter the Patient\'s Last Name: ');
+    $g = readline('Enter the Patient\'s Gender: ');
+    $d = readline('Enter the Patient\'s Date Of Birth: ');
+    $t = readline('Enter the Patient\'s Phone Number: ');
+    $e = readline('Enter the Patient\'s Email: ');
+    $a = readline('Enter the Patient\'s Address: ');
+    global $conn;
+    $stm = $conn->prepare("insert into patient (firstName,lastName,gender,dateOfBirth,phoneNum,email,address) values (?,?,?,?,?,?,?)");
+    $stm->execute([$f,$l,$g,$d,$t,$e,$a]);
+}
+function select(){
+    global $conn;
+    $stm = $conn->prepare("select * from patient");
+    $stm->execute();
+    $result = $stm->fetchAll(PDO::FETCH_ASSOC);
+    //Header of table:
+    echo "id" . " | ";
+    echo 'First Name' ." | ";
+    echo 'Last Name' ." | ";
+    echo 'Gender' ." | ";
+    echo 'Date Of Birth' ." | ";
+    echo 'Phone Num' ." | ";
+    echo 'Email' ." | ";
+    echo 'Address' ."\n";
+    for($i = 0 ; $i<$stm->rowCount();$i++){
+        echo $result[$i]['id'] ." | ";
+        echo $result[$i]['firstName'] ." | ";
+        echo $result[$i]['lastName'] ." | ";
+        echo $result[$i]['gender'] ." | ";
+        echo $result[$i]['dateOfBirth'] ." | ";
+        echo $result[$i]['phoneNum'] ." | ";
+        echo $result[$i]['email'] ." | ";
+        echo $result[$i]['address'] ."\n";
+    }
+}
 do{
     $service = 0;
     $choice = 0;
@@ -21,6 +122,10 @@ do{
             echo "5. Supprimer un patient\n";
             echo "6. Retour\n";
             $choice = (int) readline('Choose a Service: ');
+            if($choice == 1)select();
+            else if($choice == 3)insert();
+            else if($choice == 4)update();
+            else if($choice == 5)delete();
         break;
         case 2:
             echo "<=== Gestion des Départements ===>\n";
