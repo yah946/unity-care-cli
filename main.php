@@ -1,5 +1,71 @@
 <?php
 require_once "./src/connection/config.php";
+function search(){
+    // Global variables:
+    global $conn;
+    global $choice;
+    $find = false;
+    $name = 'Unknown';
+    $lname = 'Unknown';
+    // Chose the id of patient:
+    echo "Do you want to search by first name(fn) or last name(ln)?\n";
+    $i=1;
+    do{
+        if($i==1){
+            $multiChoice=readline('Your Answer: ');
+        }else if($i>=2){
+            $multiChoice=readline('Please Answer by <fn> or <ln>: ');
+        }
+        $i++;
+    }while(!str_starts_with($multiChoice,'fn') && !str_starts_with($multiChoice,'ln'));
+    $stm = $conn->prepare("select firstName,lastName from patient");
+    $stm->execute();
+    $Archive = $stm->fetchAll(PDO::FETCH_ASSOC);
+    if($multiChoice==='fn'){
+        $name = readline('Enter the Patient\'s First Name: ');
+        for($i=0;$i<count($Archive);$i++){
+            if($name==$Archive[$i]['firstName']){
+                echo "First Name=$name: Find!\n";
+                $find=true;
+            }
+        }
+    }else{
+        $lname = readline('Enter the Patient\'s Last Name: ');
+        for($i=0;$i<count($Archive);$i++){
+            if($lname==$Archive[$i]['lastName']){
+                echo "Last Name=$lname: Find!\n";
+                $find=true;
+            }
+        }
+    }
+    // Not Found
+    if(!$find){
+        echo "not found!\n";
+    }else if($find){
+        $stm = $conn->query("select * from patient where firstName=\"$name\" Or lastName=\"$lname\"");
+        $result = $stm->fetchAll(PDO::FETCH_ASSOC);
+        //Header of table:
+        echo "id" . " | ";
+        echo 'First Name' ." | ";
+        echo 'Last Name' ." | ";
+        echo 'Gender' ." | ";
+        echo 'Date Of Birth' ." | ";
+        echo 'Phone Num' ." | ";
+        echo 'Email' ." | ";
+        echo 'Address' ."\n";
+        for($i = 0 ; $i<$stm->rowCount();$i++){
+            echo $result[$i]['id'] ." | ";
+            echo $result[$i]['firstName'] ." | ";
+            echo $result[$i]['lastName'] ." | ";
+            echo $result[$i]['gender'] ." | ";
+            echo $result[$i]['dateOfBirth'] ." | ";
+            echo $result[$i]['phoneNum'] ." | ";
+            echo $result[$i]['email'] ." | ";
+            echo $result[$i]['address'] ."\n";
+        }
+    }
+    $choice=6;
+}
 function update(){
     // Global variables:
     global $conn;
@@ -123,6 +189,7 @@ do{
             echo "6. Retour\n";
             $choice = (int) readline('Choose a Service: ');
             if($choice == 1)select();
+            else if($choice == 2)search();
             else if($choice == 3)insert();
             else if($choice == 4)update();
             else if($choice == 5)delete();
