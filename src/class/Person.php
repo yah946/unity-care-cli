@@ -1,5 +1,6 @@
 <?php
-class Person{
+require_once "./BaseModel.php";
+class Person implements BaseModel{
     private $f_name='Unknown';
     private $l_name='Unknown';
     private $email='example@example.com';
@@ -10,5 +11,28 @@ class Person{
        $this->email = $e;
        $this->tel = $t;
     }
+    public function delete(){
+        throw new Exception("Not Implemented", 1);
+        
+    }
+    public function update(){
+        throw new Exception("Not Implemented", 1);
+        
+    }
+    public function create(){
+        throw new Exception("Not Implemented", 1);
+        
+    }
+    public function select(){
+        throw new Exception("Not Implemented", 1);
+        
+    }
+    public function search(){
+        throw new Exception("Not Implemented", 1);
+        
+    }
+    public function vrfy(){
+        throw new Exception("Not Implemented", 1);
+        
+    }
 }
-$p = new Person('Youssef','Chakir','youssef@gamil.com','072332323');
