@@ -1,5 +1,16 @@
 <?php
 require_once "./src/connection/config.php";
+//Regex
+$fRx = '/^[a-zA-Z]{2,15}(\s[a-zA-Z]{2,15})?$/';
+$lRx = '/[a-zA-Z]{2,15}/';
+$gRx = '/male|female/';
+$dRx = '/^(19|20)[0-9]{2}-(0?[1-9]|1[0-2])-(0?[1-9]|1[1-9]|2[1-9]|3[01])$/';
+$tRx = '/^(\+212|0)[67]{1}[0-9]{8}$/';
+$eRx = '/^[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+){0,15}@(gmail)\.(com)$/';
+// |NRue Quartier Ville
+$aRx = '/^[0-9]{1,3}\s[a-zA-Z]{2,15}(?:\s[a-zA-Z]{2,15})?\s[a-zA-Z\']{2,15}$/u';
+$bRx = '/^(Block)[A-Z]{1}$/';
+//End of My Zone
 function search(){
     // Global variables:
     global $conn;
@@ -131,16 +142,29 @@ function delete(){
     $choice=6;
 }
 function insert(){
-    $f = readline('Enter the Patient\'s First Name: ');
-    $l = readline('Enter the Patient\'s Last Name: ');
-    $g = readline('Enter the Patient\'s Gender: ');
-    $d = readline('Enter the Patient\'s Date Of Birth: ');
-    $t = readline('Enter the Patient\'s Phone Number: ');
-    $e = readline('Enter the Patient\'s Email: ');
-    $a = readline('Enter the Patient\'s Address: ');
-    global $conn;
+    global $conn,$fRx,$lRx,$gRx,$dRx,$tRx,$eRx,$aRx,$choice;
+    $i=1;
+    do{
+        if($i>1) echo"Fill in again invalid Input:\n";
+        $f = readline('Enter the Patient\'s First Name: ');
+        if(!preg_match($fRx,$f)) echo "Invalid first name! Ex: Achraf AbdAlhakim (Second opt)\n";
+        $l = readline('Enter the Patient\'s Last Name: ');
+        if(!preg_match($lRx,$l)) echo "Invalid last name! Ex: Saloua\n";
+        $g = readline('Enter the Patient\'s Gender: ');
+        if(!preg_match($gRx,$g)) echo "Invalid gender! Ex: male or female\n";
+        $d = readline('Enter the Patient\'s Date Of Birth: ');
+        if(!preg_match($dRx,$d)) echo "Invalid Date! Syntax: YYYY-MM-DD Ex: \n";
+        $t = readline('Enter the Patient\'s Phone Number: ');
+        if(!preg_match($tRx,$t)) echo "Invalid Number! Ex: +212 6000000000 or 0700000000\n";
+        $e = readline('Enter the Patient\'s Email: ');
+        if(!preg_match($eRx,$e)) echo "Invalid email! Ex: example@gmail.com\n";
+        $a = readline('Enter the Patient\'s Address: ');
+        if(!preg_match($aRx,$a)) echo "Invalid address! Syntax: <Number of Street> <Neighborhood> <City> Ex:20 Maghrib Arabi Qnitra\n";
+        $i++;
+    }while(!preg_match($fRx,$f) || !preg_match($lRx,$l) || !preg_match($gRx,$g) || !preg_match($dRx,$d) || !preg_match($tRx,$t)&&!preg_match($eRx,$e) || !preg_match($a,$aRx));
     $stm = $conn->prepare("insert into patient (firstName,lastName,gender,dateOfBirth,phoneNum,email,address) values (?,?,?,?,?,?,?)");
-    $stm->execute([$f,$l,$g,$d,$t,$e,$a]);
+    $stm->execute([$f,$l,$g,/*$d,$t,$e,$a*/]);
+    $choice=6;
 }
 function select(){
     global $conn;
