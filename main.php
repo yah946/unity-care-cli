@@ -7,10 +7,11 @@ $gRx = '/male|female/';
 $dRx = '/^(19|20)[0-9]{2}-(0?[1-9]|1[0-2])-(0?[1-9]|1[1-9]|2[1-9]|3[01])$/';
 $tRx = '/^(\+212|0)[67]{1}[0-9]{8}$/';
 $eRx = '/^[a-zA-Z0-9]+([-_.][a-zA-Z0-9]+){0,15}@(gmail)\.(com)$/';
-// |NRue Quartier Ville
+// NRue Quartier Ville
 $aRx = '/^[0-9]{1,3}\s[a-zA-Z]{2,15}(?:\s[a-zA-Z]{2,15})?\s[a-zA-Z\']{2,15}$/u';
+// Block A, B ...
 $bRx = '/^(Block)[A-Z]{1}$/';
-//End of My Zone
+// End of My Zone
 function search(){
     // Global variables:
     global $conn;
