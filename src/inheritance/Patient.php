@@ -1,13 +1,10 @@
 <?php
-require_once '../class/Person.php';
-require_once '../connection/config.php';
+require_once __DIR__ . "/../class/Person.php";
 class Patient extends Person{
     private $gender='male';
     private $address='somewhere';
-    public function __construct($n,$ln,$e,$t,$g,$a){
-        parent::__construct($n,$ln,$e,$t);
-        $this->gender = $g;
-        $this->address = $a;
+    public function getTableName(): string
+    {
+        return "patient";
     }
-
 }

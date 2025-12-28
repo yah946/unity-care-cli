@@ -1,9 +1,10 @@
 <?php
-class Deparetement{
+require_once __DIR__ . "/../class/BaseModel.php";
+class Deparetement extends BaseModel{
     private $name;
     private $location;
-    public function __construct($n,$l){
-        $this->name=$n;
-        $this->location=$l;
+    public function getTableName(): string
+    {
+        return "departement";
     }
 }
